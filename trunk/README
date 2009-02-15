@@ -1,0 +1,5 @@
+Simple rss parser upon expat
+
+Software depends:
+1. expat-2.0.1
+2. curl-7.19.2 (libcurl) - for test
