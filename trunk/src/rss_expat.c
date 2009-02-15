@@ -105,26 +105,22 @@ void xml_stop_item_handler(void *user_data, const XML_Char *s, int len)
 }
 
 // Parse title data
-// TODO Do I really need that data[len+1]? (507,943 rss.xml)
 void xml_title_handler(void *user_data, const XML_Char *s, int len)
 {
 	int x;
-	char data[len+1];
 	char *tmp = NULL;
 
 	struct item_data *item_data_ptr = user_data;
-
-	memset(data, 0, len+1);
-
-	for (x = 0; x < len; x++)
-		data[x] = s[x];
 
 	// Data may by split across calls
 	if (item_data_ptr->title_size == 0)
 	{
 		tmp = realloc(item_data_ptr->title, len+1);
-		tmp[0] = '\0';
-		strcat(tmp, data);
+
+		for (x = 0; x < len; x++)
+			tmp[x] = s[x];
+
+		tmp[x] = '\0';
 
 		// Save new pointer
 		item_data_ptr->title = tmp;
@@ -133,9 +129,16 @@ void xml_title_handler(void *user_data, const XML_Char *s, int len)
 	}
 	else // Next call, add data
 	{
+		int z = 0;
+
 		tmp = realloc(item_data_ptr->title, item_data_ptr->title_size+len);
-	
-		strcat(tmp, data);
+
+		for (x = item_data_ptr->title_size-1; x < item_data_ptr->title_size+len; x++)
+		{
+			tmp[x] = s[z];
+			z++;
+		}
+		tmp[x-1] = '\0';
 
 		// Save new pointer
 		item_data_ptr->title = tmp;
@@ -145,26 +148,22 @@ void xml_title_handler(void *user_data, const XML_Char *s, int len)
 }
 
 // Parse link data
-// TODO Do I really need that data[len+1]? (507,943 rss.xml)
 void xml_link_handler(void *user_data, const XML_Char *s, int len)
 {
 	int x;
-	char data[len+1];
 	char *tmp = NULL;
 
 	struct item_data *item_data_ptr = user_data;
-
-	memset(data, 0, len+1);
-
-	for (x = 0; x < len; x++)
-		data[x] = s[x];
 
 	// Data may by split across calls
 	if (item_data_ptr->link_size == 0)
 	{
 		tmp = realloc(item_data_ptr->link, len+1);
-		tmp[0] = '\0';
-		strcat(tmp, data);
+		
+		for (x = 0; x < len; x++)
+			tmp[x] = s[x];
+
+		tmp[x] = '\0';
 
 		// Save new pointer
 		item_data_ptr->link = tmp;
@@ -173,10 +172,17 @@ void xml_link_handler(void *user_data, const XML_Char *s, int len)
 	}
 	else // Next call, add data
 	{
-		tmp = realloc(item_data_ptr->link, item_data_ptr->link_size+len);
-	
-		strcat(tmp, data);
+		int z = 0;
 
+		tmp = realloc(item_data_ptr->link, item_data_ptr->link_size+len);
+
+		for (x = item_data_ptr->link_size-1; x < item_data_ptr->link_size+len; x++)
+		{
+			tmp[x] = s[z];
+			z++;
+		}
+		tmp[x-1] = '\0';
+	
 		// Save new pointer
 		item_data_ptr->link = tmp;
 
@@ -185,26 +191,22 @@ void xml_link_handler(void *user_data, const XML_Char *s, int len)
 }
 
 // Parse description data
-// TODO Do I really need that data[len+1]? (507,943 rss.xml)
 void xml_description_handler(void *user_data, const XML_Char *s, int len)
 {
 	int x;
-	char data[len+1];
 	char *tmp = NULL;
 
 	struct item_data *item_data_ptr = user_data;
-
-	memset(data, 0, len+1);
-
-	for (x = 0; x < len; x++)
-		data[x] = s[x];
 
 	// Data may by split across calls
 	if (item_data_ptr->description_size == 0)
 	{
 		tmp = realloc(item_data_ptr->description, len+1);
-		tmp[0] = '\0';
-		strcat(tmp, data);
+
+		for (x = 0; x < len; x++)
+			tmp[x] = s[x];
+
+		tmp[x] = '\0';
 
 		// Save new pointer
 		item_data_ptr->description = tmp;
@@ -213,10 +215,17 @@ void xml_description_handler(void *user_data, const XML_Char *s, int len)
 	}
 	else // Next call, add data
 	{
-		tmp = realloc(item_data_ptr->description, item_data_ptr->description_size+len);
-	
-		strcat(tmp, data);
+		int z = 0;
 
+		tmp = realloc(item_data_ptr->description, item_data_ptr->description_size+len);
+
+		for (x = item_data_ptr->description_size-1; x < item_data_ptr->description_size+len; x++)
+		{
+			tmp[x] = s[z];
+			z++;
+		}
+		tmp[x-1] = '\0';
+	
 		// Save new pointer
 		item_data_ptr->description = tmp;
 
