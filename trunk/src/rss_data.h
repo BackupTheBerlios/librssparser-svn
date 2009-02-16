@@ -3,14 +3,14 @@
  * 
  *       Filename:  rss_data.h
  * 
- *    Description:  
+ *    Description:  Simple rss parser upon expat
  * 
  *        Version:  1.0
  *        Created:  24.12.2008 11:17:39 CET
  *       Revision:  none
  *       Compiler:  gcc
  * 
- *         Author:   (), 
+ *         Author:  Slawomir Stepien (dienet@poczta.fm), 
  *        Company:  
  * 
  * =====================================================================================

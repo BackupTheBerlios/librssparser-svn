@@ -16,11 +16,11 @@
  * =====================================================================================
  */
 
-#include "rss.h"
-#include "rss_list.h"
-
 #include <stdlib.h>
 #include <string.h>
+
+#include "rss.h"
+#include "rss_list.h"
 
 // Add title, link, etc to list
 void add_rss_data(const char *title, const char *link, const char *description)

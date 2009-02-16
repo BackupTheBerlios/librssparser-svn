@@ -16,17 +16,23 @@
  * =====================================================================================
  */
 
-#include "rss.h"
-#include "rss_expat.h"
-#include "rss_list.h"
-#include "rss_data.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <expat.h>
 
+#include "rss.h"
+#include "rss_expat.h"
+#include "rss_list.h"
+#include "rss_data.h"
+#include "rss_options.h"
+
 RSS_data_t *RSS_data = NULL;
+
+struct opt parser_options = {
+	// linked_list
+	LLHAVETITLE | LLHAVELINK | LLHAVEDESCRIPTION,
+};
 
 static int set_rss_data(char *input_data, size_t input_data_size);
 static void free_rss_data(void);
@@ -87,4 +93,19 @@ struct RSS_item_t *rss_fetch(char *input_data, size_t input_data_size)
 	free_rss_data();
 
 	return list_head.first;		// return data as list
+}
+
+// Set parser options
+void rss_set_opt(int opt_type, int options)
+{
+#ifdef DEBUG
+//	printf ("opt_type: %d\n", opt_type);
+//	printf ("option: %d\n", options);
+#endif
+
+	// Set options for linked-list
+	if (opt_type == LLOPTTYPE)
+	{
+		parser_options.linked_list = options;
+	}
 }

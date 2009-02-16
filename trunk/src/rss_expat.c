@@ -20,12 +20,15 @@
 #include "rss_expat.h"
 #include "rss_list.h"
 #include "rss_iconv.h"
+#include "rss_options.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <expat.h>
 #include <iconv.h>
 #include <ctype.h>
+
+extern struct opt parser_options;
 
 XML_Parser RSS_parser;
 
@@ -107,7 +110,7 @@ void xml_stop_item_handler(void *user_data, const XML_Char *s, int len)
 // Parse title data
 void xml_title_handler(void *user_data, const XML_Char *s, int len)
 {
-	int x;
+	size_t x;
 	char *tmp = NULL;
 
 	struct item_data *item_data_ptr = user_data;
@@ -117,7 +120,7 @@ void xml_title_handler(void *user_data, const XML_Char *s, int len)
 	{
 		tmp = realloc(item_data_ptr->title, len+1);
 
-		for (x = 0; x < len; x++)
+		for (x = 0; x < (size_t)len; x++)
 			tmp[x] = s[x];
 
 		tmp[x] = '\0';
@@ -133,7 +136,7 @@ void xml_title_handler(void *user_data, const XML_Char *s, int len)
 
 		tmp = realloc(item_data_ptr->title, item_data_ptr->title_size+len);
 
-		for (x = item_data_ptr->title_size-1; x < item_data_ptr->title_size+len; x++)
+		for (x = item_data_ptr->title_size-1; x < item_data_ptr->title_size+(size_t)len; x++)
 		{
 			tmp[x] = s[z];
 			z++;
@@ -150,7 +153,7 @@ void xml_title_handler(void *user_data, const XML_Char *s, int len)
 // Parse link data
 void xml_link_handler(void *user_data, const XML_Char *s, int len)
 {
-	int x;
+	size_t x;
 	char *tmp = NULL;
 
 	struct item_data *item_data_ptr = user_data;
@@ -160,7 +163,7 @@ void xml_link_handler(void *user_data, const XML_Char *s, int len)
 	{
 		tmp = realloc(item_data_ptr->link, len+1);
 		
-		for (x = 0; x < len; x++)
+		for (x = 0; x < (size_t)len; x++)
 			tmp[x] = s[x];
 
 		tmp[x] = '\0';
@@ -176,7 +179,7 @@ void xml_link_handler(void *user_data, const XML_Char *s, int len)
 
 		tmp = realloc(item_data_ptr->link, item_data_ptr->link_size+len);
 
-		for (x = item_data_ptr->link_size-1; x < item_data_ptr->link_size+len; x++)
+		for (x = item_data_ptr->link_size-1; x < item_data_ptr->link_size+(size_t)len; x++)
 		{
 			tmp[x] = s[z];
 			z++;
@@ -193,7 +196,7 @@ void xml_link_handler(void *user_data, const XML_Char *s, int len)
 // Parse description data
 void xml_description_handler(void *user_data, const XML_Char *s, int len)
 {
-	int x;
+	size_t x;
 	char *tmp = NULL;
 
 	struct item_data *item_data_ptr = user_data;
@@ -203,7 +206,7 @@ void xml_description_handler(void *user_data, const XML_Char *s, int len)
 	{
 		tmp = realloc(item_data_ptr->description, len+1);
 
-		for (x = 0; x < len; x++)
+		for (x = 0; x < (size_t)len; x++)
 			tmp[x] = s[x];
 
 		tmp[x] = '\0';
@@ -217,7 +220,7 @@ void xml_description_handler(void *user_data, const XML_Char *s, int len)
 	{
 		int z = 0;
 
-		tmp = realloc(item_data_ptr->description, item_data_ptr->description_size+len);
+		tmp = realloc(item_data_ptr->description, item_data_ptr->description_size+(size_t)len);
 
 		for (x = item_data_ptr->description_size-1; x < item_data_ptr->description_size+len; x++)
 		{
@@ -239,14 +242,26 @@ void xml_start_handler(void *user_data, const XML_Char *name, const XML_Char **a
 	// Parse title, link, etc. ony if inside item tag
 	if (item == 1)
 	{
-		if (strcmp(name, "title") == 0)
-			XML_SetCharacterDataHandler(RSS_parser, xml_title_handler);
+		// Does user wants title on linked-list?
+		if (parser_options.linked_list & LLHAVETITLE)
+		{
+			if (strcmp(name, "title") == 0)
+				XML_SetCharacterDataHandler(RSS_parser, xml_title_handler);
+		}
 
-		if (strcmp(name, "link") == 0)
-			XML_SetCharacterDataHandler(RSS_parser, xml_link_handler);
-	
-		if (strcmp(name, "description") == 0)
+		// Does user wants title on linked-list?
+		if (parser_options.linked_list & LLHAVELINK)
+		{
+			if (strcmp(name, "link") == 0)
+				XML_SetCharacterDataHandler(RSS_parser, xml_link_handler);
+		}
+
+		// Does user wants description on linked-list?
+		if (parser_options.linked_list & LLHAVEDESCRIPTION)
+		{	
+			if (strcmp(name, "description") == 0)
 			XML_SetCharacterDataHandler(RSS_parser, xml_description_handler);
+		}
 	}
 
 	// Item starts here - run handler
