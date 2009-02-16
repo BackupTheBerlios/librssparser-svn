@@ -29,6 +29,7 @@
 
 RSS_data_t *RSS_data = NULL;
 
+// Set default values
 struct opt parser_options = {
 	// linked_list
 	LLHAVETITLE | LLHAVELINK | LLHAVEDESCRIPTION,

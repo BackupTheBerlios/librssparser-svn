@@ -136,12 +136,12 @@ void xml_title_handler(void *user_data, const XML_Char *s, int len)
 
 		tmp = realloc(item_data_ptr->title, item_data_ptr->title_size+len);
 
-		for (x = item_data_ptr->title_size-1; x < item_data_ptr->title_size+(size_t)len; x++)
+		for (x = item_data_ptr->title_size-1; x < item_data_ptr->title_size+(size_t)len-1; x++)
 		{
 			tmp[x] = s[z];
 			z++;
 		}
-		tmp[x-1] = '\0';
+		tmp[x] = '\0';
 
 		// Save new pointer
 		item_data_ptr->title = tmp;
@@ -179,12 +179,12 @@ void xml_link_handler(void *user_data, const XML_Char *s, int len)
 
 		tmp = realloc(item_data_ptr->link, item_data_ptr->link_size+len);
 
-		for (x = item_data_ptr->link_size-1; x < item_data_ptr->link_size+(size_t)len; x++)
+		for (x = item_data_ptr->link_size-1; x < item_data_ptr->link_size+(size_t)len-1; x++)
 		{
 			tmp[x] = s[z];
 			z++;
 		}
-		tmp[x-1] = '\0';
+		tmp[x] = '\0';
 	
 		// Save new pointer
 		item_data_ptr->link = tmp;
@@ -220,14 +220,14 @@ void xml_description_handler(void *user_data, const XML_Char *s, int len)
 	{
 		int z = 0;
 
-		tmp = realloc(item_data_ptr->description, item_data_ptr->description_size+(size_t)len);
+		tmp = realloc(item_data_ptr->description, item_data_ptr->description_size+len);
 
-		for (x = item_data_ptr->description_size-1; x < item_data_ptr->description_size+len; x++)
+		for (x = item_data_ptr->description_size-1; x < item_data_ptr->description_size+(size_t)len-1; x++)
 		{
 			tmp[x] = s[z];
 			z++;
 		}
-		tmp[x-1] = '\0';
+		tmp[x] = '\0';
 	
 		// Save new pointer
 		item_data_ptr->description = tmp;
