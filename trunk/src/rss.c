@@ -35,11 +35,11 @@ struct opt parser_options = {
 	LLHAVETITLE | LLHAVELINK | LLHAVEDESCRIPTION,
 };
 
-static int set_rss_data(char *input_data, size_t input_data_size);
+static int set_rss_data(char *input_data);
 static void free_rss_data(void);
 
 // Save raw data to our struct
-int set_rss_data(char *input_data, size_t input_data_size)
+int set_rss_data(char *input_data)
 {
 	RSS_data = malloc(sizeof(RSS_data_t));
 
@@ -49,7 +49,7 @@ int set_rss_data(char *input_data, size_t input_data_size)
 		RSS_data->data = NULL;
 
 		RSS_data->data = strdup(input_data);
-		RSS_data->data_size = input_data_size;
+		RSS_data->data_size = strlen(input_data);
 
 		return 0;	// malloc sucess
 	}
@@ -68,12 +68,12 @@ void free_rss_data(void)
 }
 
 // Return list to user with parsed rss data
-struct RSS_item_t *rss_fetch(char *input_data, size_t input_data_size)
+struct RSS_item_t *rss_fetch(char *input_data)
 {
 	struct RSS_item_t *RSS_item_list = NULL;
 	list_head.first = list_head.last = RSS_item_list;	// start list
 
-	if (set_rss_data(input_data, input_data_size) == -1)
+	if (set_rss_data(input_data) == -1)
 	{
 #ifdef DEBUG
 		fprintf (stderr, "set_rss_data(): fail\n");

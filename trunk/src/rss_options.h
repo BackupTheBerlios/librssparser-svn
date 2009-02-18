@@ -19,6 +19,15 @@
 #ifndef  RSS_OPTIONS_INC
 #define  RSS_OPTIONS_INC
 
+//Linked-list options
+#define LLOPTTYPE	0
+
+#define LLHAVETITLE 		(1<<0)
+#define LLHAVELINK			(1<<1)
+#define LLHAVEDESCRIPTION	(1<<2)
+#define LLHAVEPUBDATE		(1<<3)
+#define LLHAVECHANNELINFO	(1<<4)
+
 struct opt
 {
 	int linked_list; 

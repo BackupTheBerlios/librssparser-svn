@@ -242,21 +242,21 @@ void xml_start_handler(void *user_data, const XML_Char *name, const XML_Char **a
 	// Parse title, link, etc. ony if inside item tag
 	if (item == 1)
 	{
-		// Does user wants title on linked-list?
+		// Does user want title on linked-list?
 		if (parser_options.linked_list & LLHAVETITLE)
 		{
 			if (strcmp(name, "title") == 0)
 				XML_SetCharacterDataHandler(RSS_parser, xml_title_handler);
 		}
 
-		// Does user wants title on linked-list?
+		// Does user want title on linked-list?
 		if (parser_options.linked_list & LLHAVELINK)
 		{
 			if (strcmp(name, "link") == 0)
 				XML_SetCharacterDataHandler(RSS_parser, xml_link_handler);
 		}
 
-		// Does user wants description on linked-list?
+		// Does user want description on linked-list?
 		if (parser_options.linked_list & LLHAVEDESCRIPTION)
 		{	
 			if (strcmp(name, "description") == 0)
@@ -315,10 +315,11 @@ int rss_parse_data(RSS_data_t *RSS_data)
 	}
 
 	// Parse raw rss data
-	if (XML_Parse(RSS_parser, RSS_data->data, RSS_data->data_size, 1) == 0)
+	if (XML_Parse(RSS_parser, RSS_data->data, RSS_data->data_size-1, 1) == 0) 
 	{
 #ifdef DEBUG
 		fprintf (stderr, "XML_Parse(): fail\n");
+		fprintf (stderr, "%s\n", XML_ErrorString(XML_GetErrorCode(RSS_parser)));
 #endif
 		XML_ParserFree(RSS_parser);
 		return -3;

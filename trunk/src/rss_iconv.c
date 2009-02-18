@@ -74,8 +74,10 @@ int data_to_utf8(RSS_data_t *RSS_data)
 	char *out = NULL;
 	size_t data_size;
 	size_t out_size;
+	size_t tmp_out_size;
 	char *tmp_data = NULL;
 	char *tmp_out = out;
+	int iconv_ret = 0;
 
 	iconv_t fd;
 
@@ -98,8 +100,8 @@ int data_to_utf8(RSS_data_t *RSS_data)
 			return -2;
 		}
 
-		// We need more bytes to save output. I think 1.5 is good TODO dynamic size
-		out_size = 1.5*RSS_data->data_size;
+		// Output size = input size
+		tmp_out_size = out_size = RSS_data->data_size+1;
 
 		if ((tmp_out = out = malloc(out_size)) == NULL)
 		{
@@ -115,13 +117,21 @@ int data_to_utf8(RSS_data_t *RSS_data)
 		tmp_data = RSS_data->data;
 		data_size = RSS_data->data_size;
 
-		// Convert TODO dynamic out buffer size
-		if (iconv(fd, &(RSS_data->data), &data_size, &out, &out_size) == (size_t)-1)
+		// Convert 
+		iconv_ret = iconv(fd, &(RSS_data->data), &data_size, &out, &out_size);
+
+		while((iconv_ret == -1) && (errno == E2BIG))
 		{
-#ifdef DEBUG
-			fprintf(stderr, "iconv(): fail\n");
-#endif
-			return -4;
+			RSS_data->data = tmp_data;
+			data_size = RSS_data->data_size+1;
+
+			out_size = (tmp_out_size += 256);
+			out = realloc(tmp_out, out_size);
+			memset(out, 0, out_size);
+			tmp_out = out;
+			tmp_out_size = out_size;
+
+			iconv_ret = iconv(fd, &(RSS_data->data), &data_size, &out, &out_size);
 		}
 
 		// Free old data

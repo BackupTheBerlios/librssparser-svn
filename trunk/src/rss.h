@@ -21,15 +21,6 @@
 
 #include <stdio.h>
 
-//Linked-list options
-#define LLOPTTYPE	0
-
-#define LLHAVETITLE 		(1<<0)
-#define LLHAVELINK			(1<<1)
-#define LLHAVEDESCRIPTION	(1<<2)
-#define LLHAVEPUBDATE		(1<<3)
-#define LLHAVECHANNELINFO	(1<<4)
-
 // Linked list item
 struct RSS_item_t
 {
@@ -40,7 +31,7 @@ struct RSS_item_t
 	struct RSS_item_t *next_item;
 };
 
-struct RSS_item_t	*rss_fetch(char *input_data, size_t input_data_size);
+struct RSS_item_t	*rss_fetch(char *input_data);
 void				free_rss_list(struct RSS_item_t *RSS_item_list);
 void				rss_set_opt(int opt_type, int option);
 
