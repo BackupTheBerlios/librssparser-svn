@@ -26,6 +26,8 @@
 #define LLHAVELINK			(1<<1)
 #define LLHAVEDESCRIPTION	(1<<2)
 #define LLHAVEPUBDATE		(1<<3)
+
+// TODO
 #define LLHAVECHANNELINFO	(1<<4)
 
 struct opt

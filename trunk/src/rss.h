@@ -28,6 +28,7 @@ struct RSS_item_t
 	char *title;
 	char *link;
 	char *description;
+	char *pubdate;
 	struct RSS_item_t *next_item;
 };
 

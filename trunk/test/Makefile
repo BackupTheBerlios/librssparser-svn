@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -W -g -D DEBUG
+CFLAGS=-Wall -W -g -D DEBUG -I../src/
 LIBS=-lexpat -lcurl
 LIBDIR=../src/
 LIBVER=1.0

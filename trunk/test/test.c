@@ -16,7 +16,8 @@
  * =====================================================================================
  */
 
-#include "../src/rss.h"
+#include <rss.h>
+#include <rss_options.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -130,7 +131,7 @@ int main(int argc, char **argv)
 
 	free(url);
 
-//	rss_set_opt(LLOPTTYPE, LLHAVETITLE | LLHAVEDESCRIPTION);
+//	rss_set_opt(LLOPTTYPE, LLHAVETITLE);
 	lista = rss_fetch(rss_buf);
 
 	if (lista == NULL)
@@ -143,7 +144,8 @@ int main(int argc, char **argv)
 
 	while(tmp != NULL)
 	{
-		printf ("\n%d\n------------\n%s\n%s\n%s\n", tmp->item_number, tmp->title, tmp->link, tmp->description);
+		printf ("\n%d\n------------\n%s\n%s\n%s\n%s\n", tmp->item_number, tmp->title, tmp->link, \
+				tmp->description, tmp->pubdate);
 		tmp = tmp->next_item;
 	}
 

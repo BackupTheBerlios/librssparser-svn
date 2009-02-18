@@ -32,6 +32,7 @@ extern struct opt parser_options;
 
 XML_Parser RSS_parser;
 
+// TODO do it better !
 int item = 0;
 
 struct item_data
@@ -42,10 +43,13 @@ struct item_data
 	char *link;
 	size_t description_size;
 	char *description;
+	size_t pubdate_size;
+	char *pubdate;
 };
 
-static void xml_stop_item_handler(void *user_data, const XML_Char *s, int len);
 static void xml_start_item_handler(void *user_data, const XML_Char *s, int len);
+static void xml_stop_item_handler(void *user_data, const XML_Char *s, int len);
+
 
 // Set data on item start to 0
 void xml_start_item_handler(void *user_data, const XML_Char *s, int len)
@@ -60,6 +64,9 @@ void xml_start_item_handler(void *user_data, const XML_Char *s, int len)
 
 	item_data_ptr->description_size = 0;
 	item_data_ptr->description = NULL;
+
+	item_data_ptr->pubdate_size = 0;
+	item_data_ptr->pubdate = NULL;
 
 	(void)user_data;
 	(void)s;
@@ -77,12 +84,13 @@ void xml_stop_item_handler(void *user_data, const XML_Char *s, int len)
 	struct item_data *item_data_ptr = user_data;
 
 	// End of parsing, save data to linked list
-	add_rss_data(item_data_ptr->title, item_data_ptr->link, item_data_ptr->description);
+	add_rss_data(item_data_ptr->title, item_data_ptr->link, item_data_ptr->description, item_data_ptr->pubdate);
 
 	// Free data
 	free(item_data_ptr->title);
 	free(item_data_ptr->link);
 	free(item_data_ptr->description);
+	free(item_data_ptr->pubdate);
 
 	item_data_ptr->title = NULL;
 	item_data_ptr->title_size = 0;
@@ -93,6 +101,8 @@ void xml_stop_item_handler(void *user_data, const XML_Char *s, int len)
 	item_data_ptr->description = NULL;
 	item_data_ptr->description_size = 0;
 
+	item_data_ptr->pubdate = NULL;
+	item_data_ptr->pubdate_size = 0;
 
 	free(item_data_ptr);
 	item_data_ptr = NULL;
@@ -118,7 +128,7 @@ void xml_title_handler(void *user_data, const XML_Char *s, int len)
 	// Data may by split across calls
 	if (item_data_ptr->title_size == 0)
 	{
-		tmp = realloc(item_data_ptr->title, len+1);
+		tmp = malloc(len+1);
 
 		for (x = 0; x < (size_t)len; x++)
 			tmp[x] = s[x];
@@ -161,7 +171,7 @@ void xml_link_handler(void *user_data, const XML_Char *s, int len)
 	// Data may by split across calls
 	if (item_data_ptr->link_size == 0)
 	{
-		tmp = realloc(item_data_ptr->link, len+1);
+		tmp = malloc(len+1);
 		
 		for (x = 0; x < (size_t)len; x++)
 			tmp[x] = s[x];
@@ -204,7 +214,7 @@ void xml_description_handler(void *user_data, const XML_Char *s, int len)
 	// Data may by split across calls
 	if (item_data_ptr->description_size == 0)
 	{
-		tmp = realloc(item_data_ptr->description, len+1);
+		tmp = malloc(len+1);
 
 		for (x = 0; x < (size_t)len; x++)
 			tmp[x] = s[x];
@@ -236,10 +246,53 @@ void xml_description_handler(void *user_data, const XML_Char *s, int len)
 	}
 }
 
+// Parse pubDate data
+void xml_pubdate_handler(void *user_data, const XML_Char *s, int len)
+{
+	size_t x;
+	char *tmp = NULL;
+
+	struct item_data *item_data_ptr = user_data;
+
+	// Data may by split across calls
+	if (item_data_ptr->pubdate_size == 0)
+	{
+		tmp = malloc(len+1);
+
+		for (x = 0; x < (size_t)len; x++)
+			tmp[x] = s[x];
+
+		tmp[x] = '\0';
+
+		// Save new pointer
+		item_data_ptr->pubdate = tmp;
+
+		item_data_ptr->pubdate_size += len+1;
+	}
+	else // Next call, add data
+	{
+		int z = 0;
+
+		tmp = realloc(item_data_ptr->pubdate, item_data_ptr->pubdate_size+len);
+
+		for (x = item_data_ptr->pubdate_size-1; x < item_data_ptr->pubdate_size+(size_t)len-1; x++)
+		{
+			tmp[x] = s[z];
+			z++;
+		}
+		tmp[x] = '\0';
+	
+		// Save new pointer
+		item_data_ptr->pubdate = tmp;
+
+		item_data_ptr->pubdate_size += len;
+	}
+}
+
 // Set start handler for tags
 void xml_start_handler(void *user_data, const XML_Char *name, const XML_Char **atts)   
 {
-	// Parse title, link, etc. ony if inside item tag
+	// Parse title, link, etc. ony if inside item or channel tag
 	if (item == 1)
 	{
 		// Does user want title on linked-list?
@@ -260,13 +313,21 @@ void xml_start_handler(void *user_data, const XML_Char *name, const XML_Char **a
 		if (parser_options.linked_list & LLHAVEDESCRIPTION)
 		{	
 			if (strcmp(name, "description") == 0)
-			XML_SetCharacterDataHandler(RSS_parser, xml_description_handler);
+				XML_SetCharacterDataHandler(RSS_parser, xml_description_handler);
+		}
+	
+		// Does user want pubDate on linked-list?
+		if (parser_options.linked_list & LLHAVEPUBDATE)
+		{	
+			//printf ("pub\n");
+			if (strcmp(name, "pubDate") == 0)
+				XML_SetCharacterDataHandler(RSS_parser, xml_pubdate_handler);
 		}
 	}
 
 	// Item starts here - run handler
 	if (strcmp(name, "item") == 0)
-		xml_start_item_handler(XML_GetUserData(RSS_parser), NULL, 0);
+		xml_start_item_handler(NULL, NULL, 0);
 
 	(void)user_data;
 	(void)atts;
@@ -282,6 +343,9 @@ void xml_stop_handler(void *user_data, const XML_Char *name)
 		XML_SetCharacterDataHandler(RSS_parser, 0);
 
 	if (strcmp(name, "description") == 0)
+		XML_SetCharacterDataHandler(RSS_parser, 0);
+
+	if (strcmp(name, "pubDate") == 0)
 		XML_SetCharacterDataHandler(RSS_parser, 0);
 
 	if ((strcmp(name, "item") == 0) && (item == 1))

@@ -28,7 +28,7 @@ struct list_head_t
 	struct RSS_item_t *last;
 } list_head;
 
-void add_rss_data(const char *title, const char *link, const char *description);
+void add_rss_data(const char *title, const char *link, const char *description, const char *pubdate);
 
 #endif   /* ----- #ifndef RSS_LIST_INC  ----- */
 

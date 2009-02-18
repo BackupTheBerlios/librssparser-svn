@@ -23,7 +23,7 @@
 #include "rss_list.h"
 
 // Add title, link, etc to list
-void add_rss_data(const char *title, const char *link, const char *description)
+void add_rss_data(const char *title, const char *link, const char *description, const char *pubdate)
 {
 	// First element
 	if (list_head.first == NULL)
@@ -48,6 +48,12 @@ void add_rss_data(const char *title, const char *link, const char *description)
 			list_head.first->description = strdup(description);
 		else
 			list_head.first->description = NULL;
+
+		if (pubdate != NULL)
+			list_head.first->pubdate = strdup(pubdate);
+		else
+			list_head.first->pubdate = NULL;
+
 	
 		list_head.first->next_item = NULL;
 	}
@@ -75,7 +81,12 @@ void add_rss_data(const char *title, const char *link, const char *description)
 			list_head.last->description = strdup(description);
 		else
 			list_head.last->description = NULL;
-	
+
+		if (pubdate != NULL)
+			list_head.last->pubdate = strdup(pubdate);
+		else
+			list_head.last->pubdate = NULL;
+
 		list_head.last->next_item = NULL;
 	}
 }
@@ -94,6 +105,7 @@ void free_rss_list(struct RSS_item_t *RSS_item_list)
 		free(list_head.first->title);
 		free(list_head.first->link);
 		free(list_head.first->description);
+		free(list_head.first->pubdate);
 
 		free(list_head.first);
 

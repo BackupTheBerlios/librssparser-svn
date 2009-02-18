@@ -100,8 +100,8 @@ int data_to_utf8(RSS_data_t *RSS_data)
 			return -2;
 		}
 
-		// Output size = input size
-		tmp_out_size = out_size = RSS_data->data_size+1;
+		// Output size = input size + 256
+		tmp_out_size = out_size = RSS_data->data_size+256;
 
 		if ((tmp_out = out = malloc(out_size)) == NULL)
 		{
@@ -122,12 +122,18 @@ int data_to_utf8(RSS_data_t *RSS_data)
 
 		while((iconv_ret == -1) && (errno == E2BIG))
 		{
+#ifdef DEBUG
+			//printf ("IN\n");
+#endif
 			RSS_data->data = tmp_data;
 			data_size = RSS_data->data_size+1;
 
-			out_size = (tmp_out_size += 256);
+			out_size = (tmp_out_size += 64);
+
 			out = realloc(tmp_out, out_size);
+		
 			memset(out, 0, out_size);
+		
 			tmp_out = out;
 			tmp_out_size = out_size;
 
@@ -137,10 +143,8 @@ int data_to_utf8(RSS_data_t *RSS_data)
 		// Free old data
 		free(tmp_data);
 
-		out = tmp_out;
-
 		// Save new data length
-		RSS_data->data_size = strlen(out);
+		RSS_data->data_size = strlen(tmp_out);
 	
 		if ((RSS_data->data = malloc(RSS_data->data_size)) == NULL)
 		{
@@ -153,9 +157,9 @@ int data_to_utf8(RSS_data_t *RSS_data)
 		memset(RSS_data->data, 0, RSS_data->data_size);
 		
 		// Save new data
-		strncpy(RSS_data->data, out, RSS_data->data_size);
+		strncpy(RSS_data->data, tmp_out, RSS_data->data_size);
 
-		free(out);
+		free(tmp_out);
 		free(from);
 		iconv_close(fd);
 	}
