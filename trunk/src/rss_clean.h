@@ -7,11 +7,8 @@
  * 
  *        Version:  1.0
  *        Created:  19.02.2009 19:10:38 CET
- *       Revision:  none
- *       Compiler:  gcc
  * 
  *         Author:  Slawomir Stepien (dienet@poczta.fm), 
- *        Company:  
  * 
  * =====================================================================================
  */
@@ -21,6 +18,7 @@
 
 #include "rss_expat.h"
 
+// This function cleans data before it's insert on linked-list
 void clean_linked_list_data(struct item_data *item_data_ptr);
 
 #endif   /* ----- #ifndef RSS_CLEAN_INC  ----- */

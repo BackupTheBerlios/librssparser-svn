@@ -7,11 +7,8 @@
  *
  *        Version:  1.0
  *        Created:  24.12.2008 11:25:43 CET
- *       Revision:  none
- *       Compiler:  gcc
  *
  *         Author:  Slawomir Stepien (dienet@poczta.fm), 
- *        Company:  
  *
  * =====================================================================================
  */
@@ -38,6 +35,11 @@ int item = 0;
 
 static void xml_start_item_handler(void *user_data, const XML_Char *s, int len);
 static void xml_stop_item_handler(void *user_data, const XML_Char *s, int len);
+
+static void xml_title_handler(void *user_data, const XML_Char *s, int len);
+static void xml_link_handler(void *user_data, const XML_Char *s, int len);
+static void xml_description_handler(void *user_data, const XML_Char *s, int len);
+static void xml_pubdate_handler(void *user_data, const XML_Char *s, int len);
 
 // Set data on item start to 0
 void xml_start_item_handler(void *user_data, const XML_Char *s, int len)
@@ -76,7 +78,13 @@ void xml_stop_item_handler(void *user_data, const XML_Char *s, int len)
 		clean_linked_list_data(item_data_ptr);
 
 	// End of parsing, save data to linked list
-	add_rss_data(item_data_ptr->title, item_data_ptr->link, item_data_ptr->description, item_data_ptr->pubdate);
+	if (add_rss_data(item_data_ptr) == -1)
+	{
+#ifdef DEBUG
+		fprintf(stderr, "add_rss_data(): fail\n");
+#endif
+		return;
+	}
 
 	// Free data
 	free(item_data_ptr->title);

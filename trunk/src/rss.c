@@ -7,11 +7,8 @@
  *
  *        Version:  1.0
  *        Created:  23.12.2008 15:06:17 CET
- *       Revision:  none
- *       Compiler:  gcc
  *
  *         Author:  Slawomir Stepien (dienet@poczta.fm), 
- *        Company:  
  *
  * =====================================================================================
  */
@@ -102,18 +99,11 @@ struct RSS_item_t *rss_fetch(char *input_data)
 // Set parser options
 void rss_set_opt(int opt_type, int options)
 {
-#ifdef DEBUG
-//	printf ("opt_type: %d\n", opt_type);
-//	printf ("option: %d\n", options);
-#endif
-
 	// Set options for linked-list
 	if (opt_type == LLOPTTYPE)
-	{
 		parser_options.linked_list = options;
-	}
+
+	// Set options for data on linked-list
 	if (opt_type == LLDATAOPTTYPE)
-	{
 		parser_options.linked_list_data = options;
-	}
 }

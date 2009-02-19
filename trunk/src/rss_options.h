@@ -7,11 +7,8 @@
  * 
  *        Version:  1.0
  *        Created:  16.02.2009 19:18:40 CET
- *       Revision:  none
- *       Compiler:  gcc
  * 
  *         Author:  Slawomir Stepien (dienet@poczta.fm), 
- *        Company:  
  * 
  * =====================================================================================
  */
@@ -38,6 +35,7 @@
 // TODO
 #define LLDATACLEARHTML		(1<<1)
 
+// Options fields structure
 struct opt
 {
 	int linked_list; 

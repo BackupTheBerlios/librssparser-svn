@@ -7,11 +7,8 @@
  * 
  *        Version:  1.0
  *        Created:  24.12.2008 12:26:13 CET
- *       Revision:  none
- *       Compiler:  gcc
  * 
  *         Author:  Slawomir Stepien (dienet@poczta.fm), 
- *        Company:  
  * 
  * =====================================================================================
  */
@@ -20,6 +17,7 @@
 #define  RSS_LIST_INC
 
 #include "rss.h"
+#include "rss_expat.h"
 
 // Save items
 struct list_head_t
@@ -28,7 +26,8 @@ struct list_head_t
 	struct RSS_item_t *last;
 } list_head;
 
-void add_rss_data(const char *title, const char *link, const char *description, const char *pubdate);
+// Add data to linked-list
+int add_rss_data(struct item_data const *item_data_ptr);
 
 #endif   /* ----- #ifndef RSS_LIST_INC  ----- */
 

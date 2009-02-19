@@ -7,11 +7,8 @@
  *
  *        Version:  1.0
  *        Created:  28.12.2008 14:51:50 CET
- *       Revision:  none
- *       Compiler:  gcc
  *
  *         Author:  Slawomir Stepien (dienet@poczta.fm), 
- *        Company:  
  *
  * =====================================================================================
  */
