@@ -16,8 +16,8 @@
  * =====================================================================================
  */
 
-#ifndef  KERNEL_RSS_INC
-#define  KERNEL_RSS_INC
+#ifndef  RSS_INC
+#define  RSS_INC
 
 #include <stdio.h>
 
@@ -36,5 +36,5 @@ struct RSS_item_t	*rss_fetch(char *input_data);
 void				free_rss_list(struct RSS_item_t *RSS_item_list);
 void				rss_set_opt(int opt_type, int option);
 
-#endif   /* ----- #ifndef KERNEL_RSS_INC  ----- */
+#endif   /* ----- #ifndef RSS_INC  ----- */
 

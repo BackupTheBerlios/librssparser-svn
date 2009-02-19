@@ -4,13 +4,13 @@ CFLAGSLIB=-W -Wall -g -D DEBUG -shared
 LIBS=-lexpat
 LIBNAME=librssparser
 LIBVER=1.0
-OBJ=rss.o rss_expat.o rss_list.o rss_iconv.o
+OBJ=rss.o rss_expat.o rss_list.o rss_iconv.o rss_clean.o
 
 $(LIBNAME)-$(LIBVER).so: $(OBJ)
 	$(CC) $(CFLAGSLIB) -o $(LIBNAME)-$(LIBVER).so -fPIC $(OBJ)
 
 
-rss.o: rss.c rss.h rss_data.h
+rss.o: rss.c rss.h rss_data.h rss_options.h
 	$(CC) $(CFLAGS) -c rss.c
 
 rss_expat.o: rss_expat.c rss_expat.h
@@ -22,6 +22,8 @@ rss_list.o: rss_list.c rss_list.h
 rss_iconv.o: rss_iconv.c rss_iconv.h
 	$(CC) $(CFLAGS) -c rss_iconv.c
 
+rss_clean.o: rss_clean.c rss_clean.h
+	$(CC) $(CFLAGS) -c rss_clean.c
 
 clean:
 	rm -rf ${OBJ}

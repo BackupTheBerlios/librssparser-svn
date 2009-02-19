@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 
 	free(url);
 
-//	rss_set_opt(LLOPTTYPE, LLHAVETITLE);
+	rss_set_opt(LLDATAOPTTYPE, LLDATACLEARCCH);
 	lista = rss_fetch(rss_buf);
 
 	if (lista == NULL)
@@ -144,8 +144,12 @@ int main(int argc, char **argv)
 
 	while(tmp != NULL)
 	{
-		printf ("\n%d\n------------\n%s\n%s\n%s\n%s\n", tmp->item_number, tmp->title, tmp->link, \
+		printf ("%d\n------------\n%s\n%s\n%s\n%s\n", tmp->item_number, tmp->title, tmp->link, \
 				tmp->description, tmp->pubdate);
+
+		if (tmp->item_number > 0)
+			printf ("\n");
+
 		tmp = tmp->next_item;
 	}
 

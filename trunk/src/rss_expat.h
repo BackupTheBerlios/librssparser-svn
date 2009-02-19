@@ -24,6 +24,19 @@
 
 #include <expat.h>
 
+// Local struct to hold parsed data
+struct item_data
+{
+	size_t title_size;
+	char *title;
+	size_t link_size;
+	char *link;
+	size_t description_size;
+	char *description;
+	size_t pubdate_size;
+	char *pubdate;
+};
+
 int 	rss_parse_data(RSS_data_t *RSS_data);
 
 void	xml_start_handler(void *user_data, const XML_Char *name, const XML_Char **atts);

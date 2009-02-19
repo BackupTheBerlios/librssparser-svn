@@ -21,6 +21,7 @@
 #include "rss_list.h"
 #include "rss_iconv.h"
 #include "rss_options.h"
+#include "rss_clean.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -34,19 +35,6 @@ XML_Parser RSS_parser;
 
 // TODO do it better !
 int item = 0;
-
-// Local struct to hold parsed data
-struct item_data
-{
-	size_t title_size;
-	char *title;
-	size_t link_size;
-	char *link;
-	size_t description_size;
-	char *description;
-	size_t pubdate_size;
-	char *pubdate;
-};
 
 static void xml_start_item_handler(void *user_data, const XML_Char *s, int len);
 static void xml_stop_item_handler(void *user_data, const XML_Char *s, int len);
@@ -82,6 +70,10 @@ void xml_start_item_handler(void *user_data, const XML_Char *s, int len)
 void xml_stop_item_handler(void *user_data, const XML_Char *s, int len)
 {
 	struct item_data *item_data_ptr = user_data;
+
+	// Need to clean up data?
+	if (parser_options.linked_list_data != 0)
+		clean_linked_list_data(item_data_ptr);
 
 	// End of parsing, save data to linked list
 	add_rss_data(item_data_ptr->title, item_data_ptr->link, item_data_ptr->description, item_data_ptr->pubdate);
@@ -205,7 +197,9 @@ void xml_description_handler(void *user_data, const XML_Char *s, int len)
 		tmp = malloc(len+1);
 
 		for (x = 0; x < (size_t)len; x++)
+		{
 			tmp[x] = s[x];
+		}
 
 		tmp[x] = '\0';
 

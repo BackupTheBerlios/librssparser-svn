@@ -32,7 +32,10 @@ RSS_data_t *RSS_data = NULL;
 // Set default values
 struct opt parser_options = {
 	// linked_list
-	LLHAVETITLE | LLHAVELINK | LLHAVEDESCRIPTION | LLHAVEPUBDATE
+	LLHAVETITLE | LLHAVELINK | LLHAVEDESCRIPTION | LLHAVEPUBDATE,
+
+	// linked-list data
+	LLDATACLEARCCH
 };
 
 static int set_rss_data(char *input_data);
@@ -108,5 +111,9 @@ void rss_set_opt(int opt_type, int options)
 	if (opt_type == LLOPTTYPE)
 	{
 		parser_options.linked_list = options;
+	}
+	if (opt_type == LLDATAOPTTYPE)
+	{
+		parser_options.linked_list_data = options;
 	}
 }
