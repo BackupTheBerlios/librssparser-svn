@@ -35,6 +35,7 @@ XML_Parser RSS_parser;
 // TODO do it better !
 int item = 0;
 
+// Local struct to hold parsed data
 struct item_data
 {
 	size_t title_size;
@@ -49,7 +50,6 @@ struct item_data
 
 static void xml_start_item_handler(void *user_data, const XML_Char *s, int len);
 static void xml_stop_item_handler(void *user_data, const XML_Char *s, int len);
-
 
 // Set data on item start to 0
 void xml_start_item_handler(void *user_data, const XML_Char *s, int len)
@@ -91,18 +91,6 @@ void xml_stop_item_handler(void *user_data, const XML_Char *s, int len)
 	free(item_data_ptr->link);
 	free(item_data_ptr->description);
 	free(item_data_ptr->pubdate);
-
-	item_data_ptr->title = NULL;
-	item_data_ptr->title_size = 0;
-
-	item_data_ptr->link = NULL;
-	item_data_ptr->link_size = 0;
-
-	item_data_ptr->description = NULL;
-	item_data_ptr->description_size = 0;
-
-	item_data_ptr->pubdate = NULL;
-	item_data_ptr->pubdate_size = 0;
 
 	free(item_data_ptr);
 	item_data_ptr = NULL;
@@ -292,7 +280,7 @@ void xml_pubdate_handler(void *user_data, const XML_Char *s, int len)
 // Set start handler for tags
 void xml_start_handler(void *user_data, const XML_Char *name, const XML_Char **atts)   
 {
-	// Parse title, link, etc. ony if inside item or channel tag
+	// Parse title, link, etc. ony if inside item tag
 	if (item == 1)
 	{
 		// Does user want title on linked-list?
@@ -319,7 +307,6 @@ void xml_start_handler(void *user_data, const XML_Char *name, const XML_Char **a
 		// Does user want pubDate on linked-list?
 		if (parser_options.linked_list & LLHAVEPUBDATE)
 		{	
-			//printf ("pub\n");
 			if (strcmp(name, "pubDate") == 0)
 				XML_SetCharacterDataHandler(RSS_parser, xml_pubdate_handler);
 		}
@@ -336,20 +323,12 @@ void xml_start_handler(void *user_data, const XML_Char *name, const XML_Char **a
 // Set stop handlers
 void xml_stop_handler(void *user_data, const XML_Char *name)
 {
-	if (strcmp(name, "title") == 0)
-		XML_SetCharacterDataHandler(RSS_parser, 0);
-	
-	if (strcmp(name, "link") == 0)
-		XML_SetCharacterDataHandler(RSS_parser, 0);
-
-	if (strcmp(name, "description") == 0)
-		XML_SetCharacterDataHandler(RSS_parser, 0);
-
-	if (strcmp(name, "pubDate") == 0)
-		XML_SetCharacterDataHandler(RSS_parser, 0);
-
+	// If this is item and tag run handler
 	if ((strcmp(name, "item") == 0) && (item == 1))
 		xml_stop_item_handler(XML_GetUserData(RSS_parser), NULL, 0);
+
+	// Else set data handler to NULL
+	XML_SetCharacterDataHandler(RSS_parser, 0);
 
 	(void)user_data;
 }
