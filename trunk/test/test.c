@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 
 	free(url);
 
-	rss_set_opt(LLDATAOPTTYPE, LLDATACLEARCCH);
+	rss_set_opt(LLDATAOPTTYPE, LLDATACLEARCCH | LLDATACLEARHTML);
 	lista = rss_fetch(rss_buf);
 
 	if (lista == NULL)

@@ -20,6 +20,121 @@
 
 extern struct opt parser_options;
 
+char *html_markup[] =
+{
+	"&amp;",        /* ampersand  & */
+	"&quot;",       /* quotation mark " */
+	"&lt;",         /* less-than sign < */
+	"&gt;",         /* greater-than sign > */
+	"&nbsp;",       /* no-break space  */
+	"&copy;",       /* copyright sign (C) */
+	"&ldquo;",      /* left double quotation mark " */
+	"&rdquo;",      /* right double quotation mark " */
+	"&sbquo;",      /* single low-9 quotation mark " */
+	"&bdquo;",      /* double low-9 quotation mark " */
+	"&ndash;",      /* en dash - */
+
+	"&#38;",        /* ampersand  & */
+	"&#34;",        /* quotation mark " */
+	"&#60;",        /* less-than sign < */
+	"&#62;",        /* greater-than sign > */
+	"&#8220;",      /* quotation mark " */
+	"&#8221;",      /* quotation mark " */
+	"&#8218;",      /* quotation mark " */
+	"&#8222;",      /* quotation mark " */
+	"&#8211;",      /* en dash - */
+	"&#39;",        /* apostrophe ' */
+};
+
+char *html_ascii[] =
+{
+	"&",            /* &amp; */
+	"\"",           /* &quot; */
+	"<",            /* &lt; */
+	">",            /* &gt; */
+	" ",            /* &nbsp; */
+	"(C)",          /* &copy; */
+	"\"",           /* &ldquo; */
+	"\"",           /* &rdquo; */
+	"\"",           /* &sbquo; */
+	"\"",           /* &bdquo; */
+	"-",            /* &ndash; */
+        
+	"&",            /* &#38; */
+	"\"",           /* &#34; */
+	"<",            /* &#60; */
+	">",            /* &#62; */
+	"\"",           /* &#8220; */
+	"\"",           /* &#8221; */
+	"\"",           /* &#8218; */
+	"\"",           /* &#8222; */
+	"-",            /* &#8211; */
+	"\'",           /* &#39; */
+};      
+
+// Count string size without html tags
+size_t count_no_html_size(char *ptr)
+{
+	size_t new_size = 0;
+	int in_html = 0;
+
+	while(*ptr != 0) 
+	{
+		if (*ptr == '<')
+		{
+			in_html = 1;
+			ptr++;
+			continue;
+		}
+
+		if (*ptr == '>')
+		{
+			in_html = 0;
+			ptr++;
+			continue;
+		}
+
+		if (in_html == 0)
+			new_size++;
+
+		ptr++;
+	}
+
+	return new_size;
+}
+
+// Save string without html tags
+void save_no_html_string(char *to, char *from)
+{
+	int in_html = 0;
+
+	while(*from != 0)
+	{
+		if (*from == '<')
+		{
+			in_html = 1;
+			from++;
+			continue;
+		}
+
+		if (*from == '>')
+		{
+			in_html = 0;
+			from++;
+			continue;
+		}
+
+		if (in_html == 0)
+		{
+			*to = *from;
+			to++;
+		}
+
+		from++;
+	}
+	*to = '\0';
+}
+
 // Clean data on linked-list as user wants
 void clean_linked_list_data(struct item_data *item_data_ptr)
 {
@@ -69,9 +184,79 @@ void clean_linked_list_data(struct item_data *item_data_ptr)
 		}
 	}
 	
-	// Clear html tags TODO
+	// Clear html tags
 	if (parser_options.linked_list_data & LLDATACLEARHTML)
 	{
-	
+		char *no_html_title = NULL;
+		char *no_html_link = NULL;
+		char *no_html_pubdate = NULL;
+		char *no_html_description = NULL;
+
+		char *ptr = NULL;
+		size_t new_size = 0;
+
+		if ((tmp = item_data_ptr->title) != NULL)
+		{
+			new_size = count_no_html_size(tmp);
+			
+			ptr = no_html_title = malloc(new_size+1);
+
+			tmp = item_data_ptr->title;
+
+			save_no_html_string(ptr, tmp);
+
+			free(item_data_ptr->title);
+
+			item_data_ptr->title = no_html_title;
+			item_data_ptr->title_size = new_size;
+		}
+
+		if ((tmp = item_data_ptr->link) != NULL)
+		{
+			new_size = count_no_html_size(tmp);
+
+			ptr = no_html_link = malloc(new_size+1);
+
+			tmp = item_data_ptr->link;
+
+			save_no_html_string(ptr, tmp);
+
+			free(item_data_ptr->link);
+
+			item_data_ptr->link = no_html_link;
+			item_data_ptr->link_size = new_size;
+		}
+
+		if ((tmp = item_data_ptr->pubdate) != NULL)
+		{
+			new_size = count_no_html_size(tmp);
+			
+			ptr = no_html_pubdate = malloc(new_size+1);
+
+			tmp = item_data_ptr->pubdate;
+
+			save_no_html_string(ptr, tmp);
+
+			free(item_data_ptr->pubdate);
+
+			item_data_ptr->pubdate = no_html_pubdate;
+			item_data_ptr->pubdate_size = new_size;
+		}
+
+		if ((tmp = item_data_ptr->description) != NULL)
+		{
+			new_size = count_no_html_size(tmp);
+
+			ptr = no_html_description = malloc(new_size+1);
+
+			tmp = item_data_ptr->description;
+
+			save_no_html_string(ptr, tmp);
+
+			free(item_data_ptr->description);
+
+			item_data_ptr->description = no_html_description;
+			item_data_ptr->description_size = new_size;
+		}		
 	}
 }
