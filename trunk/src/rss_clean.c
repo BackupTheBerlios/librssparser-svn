@@ -133,10 +133,7 @@ char *replace(const char *whole_line)
 		margin = (int)linelen - (int)oldlen;
 
 		if (margin <= 0)
-		{
-			free(in_line_ptr);
-			return NULL;
-		}
+			continue;
 
 		// Count memory needed
 		if (newlen != oldlen)
