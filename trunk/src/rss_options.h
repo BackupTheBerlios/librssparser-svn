@@ -17,7 +17,7 @@
 #define  RSS_OPTIONS_INC
 
 //Linked-list options
-#define LLOPTTYPE	0
+#define LLOPTTYPE			0
 
 #define LLHAVETITLE			(1<<0)
 #define LLHAVELINK			(1<<1)
@@ -28,11 +28,9 @@
 #define LLHAVECHANNELINFO	(1<<4)
 
 // Data on linked-list options
-#define LLDATAOPTTYPE	1
+#define LLDATAOPTTYPE		1
 
 #define LLDATACLEARCCH		(1<<0)
-
-// TODO
 #define LLDATACLEARHTML		(1<<1)
 
 // Options fields structure

@@ -8,7 +8,7 @@ HDIR=../src/
 OBJ=test.o
 
 test: $(OBJ)
-	$(CC) $(CFLAGS) $(LIBS) $(LIBDIR)$(LIBNAME)-$(LIBVER).so $(OBJ) -o test
+	$(CC) $(CFLAGS) $(LIBS) $(OBJ) $(LIBDIR)$(LIBNAME)-$(LIBVER).a -o test
 
 test.o: test.c
 	$(CC) $(CFLAGS) -c test.c
