@@ -77,8 +77,9 @@ char *html_ascii[] =
 char *rm_spaces(char *buf)
 {
 	size_t len = 0;
-	char *last = 0;
-
+	char *last = NULL;
+	char *ptr = NULL;
+	
 	if (buf == NULL)
 		return NULL;
 
@@ -86,6 +87,8 @@ char *rm_spaces(char *buf)
 		buf++;
 
 	len = strlen(buf);
+
+	ptr = buf; // save pointer
 
 	last = buf + (len - 1);
 
@@ -95,6 +98,25 @@ char *rm_spaces(char *buf)
 		last--;
 	}
 	*(last+1) = '\0';
+
+	last = ptr;
+
+	// Remove double, triple... spaces
+	while(*ptr != '\0')
+	{
+		*last = *ptr;
+		last++;
+
+		if(*ptr == ' ')
+		{
+			ptr++;
+			while(*ptr == ' ')
+				ptr++;
+		}
+		else
+			ptr++;
+	}
+	*last = '\0';
 
 	return buf;
 }
