@@ -74,6 +74,7 @@ char *html_ascii[] =
 };      
 
 // Remove spaces at beginning and end of string
+// Remove double, triple, ect. spaces inside of string
 char *rm_spaces(char *buf)
 {
 	size_t len = 0;
@@ -101,16 +102,15 @@ char *rm_spaces(char *buf)
 
 	last = ptr;
 
-	// Remove double, triple... spaces
+	// Remove double, triple... spaces inside string
 	while(*ptr != '\0')
 	{
 		*last = *ptr;
 		last++;
 
-		if(*ptr == ' ')
+		if(isspace(*ptr))
 		{
-			ptr++;
-			while(*ptr == ' ')
+			while(isspace(*ptr))
 				ptr++;
 		}
 		else
