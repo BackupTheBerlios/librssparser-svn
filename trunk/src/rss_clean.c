@@ -102,7 +102,7 @@ char *rm_spaces(char *buf)
 
 	last = ptr;
 
-	// Remove double, triple... spaces inside string
+	// Remove double, triple... spaces inside of string
 	while(*ptr != '\0')
 	{
 		*last = *ptr;
@@ -130,90 +130,67 @@ char *replace(const char *whole_line)
 	const char *new = NULL;
 	const char *old = NULL;
 
-	char *sr = NULL, *ret = NULL;
+	char *sr = NULL;
+	char *ret = NULL;
 
-	size_t markup_pos;
+	size_t markup_pos = 0;
 	size_t i = 0;
-	size_t count = 0;
 
 	size_t linelen = 0;
 	size_t newlen = 0;
 	size_t oldlen = 0;
 	int margin = 0;
 
-	for (markup_pos = 0; markup_pos < (sizeof(html_markup) / sizeof(char *)); markup_pos++)
+	size_t html_markup_size = (sizeof(html_markup) / sizeof(char *));
+
+	for (markup_pos = 0; markup_pos < html_markup_size; markup_pos++)
 	{
 		new = html_ascii[markup_pos];
 		old = html_markup[markup_pos];
 
 		i = 0;
-		count = 0;
 
 		linelen = strlen(in_line);
+		
 		newlen = strlen(new);
 		oldlen = strlen(old);
+		
 		margin = (int)linelen - (int)oldlen;
 
 		if (margin <= 0)
 			continue;
 
-		// Count memory needed
-		if (newlen != oldlen)
-		{
-			for (i = 0; i < (unsigned int)(margin+1); )
-			{
-				if (strncmp(&in_line[i], old, oldlen) == 0)
-				{
-					count++;
-					i += oldlen;
-				}
-				else
-					i++;
-			}
-		}
-		else
-			i = linelen;
+		sr = ret = malloc(linelen + 1); // newlen is always < oldlen
 
-		if (linelen == i)
-			ret = malloc(i + 1 + count * (newlen - oldlen));
-		else
-			ret = malloc(i + oldlen + count * (newlen - oldlen));
-
-		sr = ret;
-		i = 0;
+		*sr = '\0';
 
 		// Find and replace
 		while (i <= (unsigned int)(margin-1))
 		{
-			if (strncmp(in_line, old, oldlen) == 0)
-			{
-				strncpy(sr, new, newlen);
+				if (strncmp(in_line, old, oldlen) == 0)
+				{
+					strncpy(sr, new, newlen);
 
-				in_line  += oldlen;
-				sr += newlen;
-				i += oldlen;
-			}
-			else
-			{
-				*sr++ = *in_line++;
-				i++;
-			}
+					in_line += oldlen;
+					sr += newlen;
+					i += oldlen;
+				}
+				else
+				{
+					*sr++ = *in_line++;
+					i++;
+				}
 		}
 
 		if (strncmp(in_line, old, oldlen) != 0)
 		{
-			while(i != linelen)
-			{
+			while(*in_line != '\0')
 				*sr++ = *in_line++;
-				i++;
-			}
 		}
 		else
 		{
 			strncpy(sr, new, newlen);
-
 			sr += newlen;
-			in_line  += oldlen;
 		}
 
 		*sr = '\0';	/* String */
@@ -290,6 +267,7 @@ void save_no_html_string(char *to, char *from)
 	*to = '\0';
 }
 
+// TODO \n = ' ' eeee :/
 // Clean data on linked-list as user wants
 void clean_linked_list_data(struct item_data *item_data_ptr)
 {
