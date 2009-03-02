@@ -50,7 +50,7 @@ void xml_start_item_handler(void *user_data, const XML_Char *s, int len)
 	item_data_ptr->title = NULL;
 
 	item_data_ptr->link_size = 0;
-	item_data_ptr->link = NULL;
+	
 
 	item_data_ptr->description_size = 0;
 	item_data_ptr->description = NULL;
@@ -108,41 +108,48 @@ void xml_stop_item_handler(void *user_data, const XML_Char *s, int len)
 // Parse title data
 void xml_title_handler(void *user_data, const XML_Char *s, int len)
 {
-	size_t x;
+	int x;
 	char *tmp = NULL;
+	char *tmp_ptr = tmp;
 
 	struct item_data *item_data_ptr = user_data;
 
 	// Data may by split across calls
 	if (item_data_ptr->title_size == 0)
 	{
-		tmp = malloc(len+1);
+		tmp_ptr = tmp = malloc(len+1);
 
-		for (x = 0; x < (size_t)len; x++)
-			tmp[x] = s[x];
-
-		tmp[x] = '\0';
+		x = 0;
+		while(x != len)
+		{
+			*tmp++ = *s++;
+			x++;
+		}
+		*tmp = '\0';
 
 		// Save new pointer
-		item_data_ptr->title = tmp;
+		item_data_ptr->title = tmp_ptr;
 
 		item_data_ptr->title_size += len+1;
 	}
 	else // Next call, add data
 	{
-		int z = 0;
+		x = 0;
 
-		tmp = realloc(item_data_ptr->title, item_data_ptr->title_size+len);
+		tmp_ptr = tmp = realloc(item_data_ptr->title, item_data_ptr->title_size+len);
 
-		for (x = item_data_ptr->title_size-1; x < item_data_ptr->title_size+(size_t)len-1; x++)
+		tmp += item_data_ptr->title_size-1;
+
+		while(x != len)
 		{
-			tmp[x] = s[z];
-			z++;
+			*tmp++ = *s++;
+			x++;
 		}
-		tmp[x] = '\0';
+
+		*tmp = '\0';
 
 		// Save new pointer
-		item_data_ptr->title = tmp;
+		item_data_ptr->title = tmp_ptr;
 
 		item_data_ptr->title_size += len;
 	}
@@ -151,41 +158,48 @@ void xml_title_handler(void *user_data, const XML_Char *s, int len)
 // Parse link data
 void xml_link_handler(void *user_data, const XML_Char *s, int len)
 {
-	size_t x;
+	int x;
 	char *tmp = NULL;
+	char *tmp_ptr = tmp;
 
 	struct item_data *item_data_ptr = user_data;
 
 	// Data may by split across calls
 	if (item_data_ptr->link_size == 0)
 	{
-		tmp = malloc(len+1);
-		
-		for (x = 0; x < (size_t)len; x++)
-			tmp[x] = s[x];
+		tmp_ptr = tmp = malloc(len+1);
 
-		tmp[x] = '\0';
+		x = 0;
+		while(x != len)
+		{
+			*tmp++ = *s++;
+			x++;
+		}
+		*tmp = '\0';
 
 		// Save new pointer
-		item_data_ptr->link = tmp;
+		item_data_ptr->link = tmp_ptr;
 
 		item_data_ptr->link_size += len+1;
 	}
 	else // Next call, add data
 	{
-		int z = 0;
+		x = 0;
 
-		tmp = realloc(item_data_ptr->link, item_data_ptr->link_size+len);
+		tmp_ptr = tmp = realloc(item_data_ptr->link, item_data_ptr->link_size+len);
 
-		for (x = item_data_ptr->link_size-1; x < item_data_ptr->link_size+(size_t)len-1; x++)
+		tmp += item_data_ptr->link_size-1;
+
+		while(x != len)
 		{
-			tmp[x] = s[z];
-			z++;
+			*tmp++ = *s++;
+			x++;
 		}
-		tmp[x] = '\0';
+
+		*tmp = '\0';
 	
 		// Save new pointer
-		item_data_ptr->link = tmp;
+		item_data_ptr->link = tmp_ptr;
 
 		item_data_ptr->link_size += len;
 	}
@@ -194,43 +208,48 @@ void xml_link_handler(void *user_data, const XML_Char *s, int len)
 // Parse description data
 void xml_description_handler(void *user_data, const XML_Char *s, int len)
 {
-	size_t x;
+	int x;
 	char *tmp = NULL;
+	char *tmp_ptr = tmp;
 
 	struct item_data *item_data_ptr = user_data;
 
 	// Data may by split across calls
 	if (item_data_ptr->description_size == 0)
 	{
-		tmp = malloc(len+1);
+		tmp_ptr = tmp = malloc(len+1);
 
-		for (x = 0; x < (size_t)len; x++)
+		x = 0;
+		while(x != len)
 		{
-			tmp[x] = s[x];
+			*tmp++ = *s++;
+			x++;
 		}
-
-		tmp[x] = '\0';
+		*tmp = '\0';
 
 		// Save new pointer
-		item_data_ptr->description = tmp;
+		item_data_ptr->description = tmp_ptr;
 
 		item_data_ptr->description_size += len+1;
 	}
 	else // Next call, add data
 	{
-		int z = 0;
+		x = 0;
 
-		tmp = realloc(item_data_ptr->description, item_data_ptr->description_size+len);
+		tmp_ptr = tmp = realloc(item_data_ptr->description, item_data_ptr->description_size+len);
 
-		for (x = item_data_ptr->description_size-1; x < item_data_ptr->description_size+(size_t)len-1; x++)
+		tmp += item_data_ptr->description_size-1;
+
+		while(x != len)
 		{
-			tmp[x] = s[z];
-			z++;
+			*tmp++ = *s++;
+			x++;
 		}
-		tmp[x] = '\0';
-	
+
+		*tmp = '\0';
+
 		// Save new pointer
-		item_data_ptr->description = tmp;
+		item_data_ptr->description = tmp_ptr;
 
 		item_data_ptr->description_size += len;
 	}
@@ -239,41 +258,48 @@ void xml_description_handler(void *user_data, const XML_Char *s, int len)
 // Parse pubDate data
 void xml_pubdate_handler(void *user_data, const XML_Char *s, int len)
 {
-	size_t x;
+	int x;
 	char *tmp = NULL;
+	char *tmp_ptr = tmp;
 
 	struct item_data *item_data_ptr = user_data;
 
 	// Data may by split across calls
 	if (item_data_ptr->pubdate_size == 0)
 	{
-		tmp = malloc(len+1);
+		tmp_ptr = tmp = malloc(len+1);
 
-		for (x = 0; x < (size_t)len; x++)
-			tmp[x] = s[x];
-
-		tmp[x] = '\0';
+		x = 0;
+		while(x != len)
+		{
+			*tmp++ = *s++;
+			x++;
+		}
+		*tmp = '\0';
 
 		// Save new pointer
-		item_data_ptr->pubdate = tmp;
+		item_data_ptr->pubdate = tmp_ptr;
 
 		item_data_ptr->pubdate_size += len+1;
 	}
 	else // Next call, add data
 	{
-		int z = 0;
+		x = 0;
 
-		tmp = realloc(item_data_ptr->pubdate, item_data_ptr->pubdate_size+len);
+		tmp_ptr = tmp = realloc(item_data_ptr->pubdate, item_data_ptr->pubdate_size+len);
 
-		for (x = item_data_ptr->pubdate_size-1; x < item_data_ptr->pubdate_size+(size_t)len-1; x++)
+		tmp += item_data_ptr->pubdate_size-1;
+
+		while(x != len)
 		{
-			tmp[x] = s[z];
-			z++;
+			*tmp++ = *s++;
+			x++;
 		}
-		tmp[x] = '\0';
+
+		*tmp = '\0';
 	
 		// Save new pointer
-		item_data_ptr->pubdate = tmp;
+		item_data_ptr->pubdate = tmp_ptr;
 
 		item_data_ptr->pubdate_size += len;
 	}

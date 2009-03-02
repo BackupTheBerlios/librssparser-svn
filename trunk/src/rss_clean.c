@@ -122,7 +122,7 @@ char *rm_spaces(char *buf)
 }
 
 // Find and replace
-char *replace(const char *whole_line)
+char *replace(char *whole_line)
 {
 	char *in_line = strdup(whole_line);
 	char *in_line_ptr = in_line;
@@ -167,19 +167,19 @@ char *replace(const char *whole_line)
 		// Find and replace
 		while (i <= (unsigned int)(margin-1))
 		{
-				if (strncmp(in_line, old, oldlen) == 0)
-				{
-					strncpy(sr, new, newlen);
+			if (strncmp(in_line, old, oldlen) == 0)
+			{
+				strncpy(sr, new, newlen);
 
-					in_line += oldlen;
-					sr += newlen;
-					i += oldlen;
-				}
-				else
-				{
-					*sr++ = *in_line++;
-					i++;
-				}
+				in_line += oldlen;
+				sr += newlen;
+				i += oldlen;
+			}
+			else
+			{
+				*sr++ = *in_line++;
+				i++;
+			}
 		}
 
 		if (strncmp(in_line, old, oldlen) != 0)
@@ -193,7 +193,7 @@ char *replace(const char *whole_line)
 			sr += newlen;
 		}
 
-		*sr = '\0';	/* String */
+		*sr = '\0';
 
 		free(in_line_ptr);
 		in_line = strdup(ret);
@@ -274,6 +274,7 @@ void clean_linked_list_data(struct item_data *item_data_ptr)
 	char *tmp = NULL;
 
 	// Clear control characters
+	// TODO do this as function
 	if (parser_options.linked_list_data & LLDATACLEARCCH)
 	{
 		if ((tmp = item_data_ptr->title) != NULL)
