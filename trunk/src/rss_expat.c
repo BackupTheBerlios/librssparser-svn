@@ -30,7 +30,6 @@ extern struct opt parser_options;
 
 XML_Parser RSS_parser;
 
-// TODO do it better !
 int item = 0;
 
 static void xml_start_item_handler(void *user_data, const XML_Char *s, int len);

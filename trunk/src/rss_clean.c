@@ -267,57 +267,108 @@ void save_no_html_string(char *to, char *from)
 	*to = '\0';
 }
 
-// TODO \n = ' ' eeee :/
+// Clear control characters
+void clear_cch(struct item_data *item_data_ptr)
+{
+	char *tmp = NULL;
+	char *new = NULL;
+	char *tmp_ptr = NULL;
+	char *new_ptr = NULL;
+
+	if ((tmp = item_data_ptr->title) != NULL)
+	{
+		tmp_ptr = tmp;
+		new_ptr = new = malloc(item_data_ptr->title_size);
+
+		while(*tmp != '\0') // Don't delete '\0' !
+		{
+			if (!iscntrl(*tmp))
+			{
+				*new++ = *tmp++;
+			}
+			else
+				tmp++;
+		}
+		*new = '\0';
+
+		free(item_data_ptr->title);
+		item_data_ptr->title = new_ptr;
+		item_data_ptr->title_size = strlen(new_ptr);
+	}
+
+	if ((tmp = item_data_ptr->link) != NULL)
+	{
+		tmp_ptr = tmp;
+		new_ptr = new = malloc(item_data_ptr->link_size);
+
+		while(*tmp != '\0') // Don't delete '\0' !
+		{
+			if (!iscntrl(*tmp))
+			{
+				*new++ = *tmp++;
+			}
+			else
+				tmp++;
+		}
+		*new = '\0';
+
+		free(item_data_ptr->link);
+		item_data_ptr->link = new_ptr;
+		item_data_ptr->link_size = strlen(new_ptr);
+	}
+
+	if ((tmp = item_data_ptr->description) != NULL)
+	{
+		tmp_ptr = tmp;
+		new_ptr = new = malloc(item_data_ptr->description_size);
+
+		while(*tmp != '\0') // Don't delete '\0' !
+		{
+			if (!iscntrl(*tmp))
+			{
+				*new++ = *tmp++;
+			}
+			else
+				tmp++;
+		}
+		*new = '\0';
+
+		free(item_data_ptr->description);
+		item_data_ptr->description = new_ptr;
+		item_data_ptr->description_size = strlen(new_ptr);
+	}
+
+	if ((tmp = item_data_ptr->pubdate) != NULL)
+	{
+		tmp_ptr = tmp;
+		new_ptr = new = malloc(item_data_ptr->pubdate_size);
+
+		while(*tmp != '\0') // Don't delete '\0' !
+		{
+			if (!iscntrl(*tmp))
+			{
+				*new++ = *tmp++;
+			}
+			else
+				tmp++;
+		}
+		*new = '\0';
+
+		free(item_data_ptr->pubdate);
+		item_data_ptr->pubdate = new_ptr;
+		item_data_ptr->pubdate_size = strlen(new_ptr);
+	}
+}
+
 // Clean data on linked-list as user wants
 void clean_linked_list_data(struct item_data *item_data_ptr)
 {
 	char *tmp = NULL;
 
 	// Clear control characters
-	// TODO do this as function
 	if (parser_options.linked_list_data & LLDATACLEARCCH)
-	{
-		if ((tmp = item_data_ptr->title) != NULL)
-		{
-			while(*tmp != 0) // Don't delete '\0' !
-			{
-				if (iscntrl(*tmp))
-					*tmp = ' ';
-				tmp++;
-			}
-		}
-
-		if ((tmp = item_data_ptr->link) != NULL)
-		{
-			while(*tmp != 0)
-			{
-				if (iscntrl(*tmp))
-					*tmp = ' ';
-				tmp++;
-			}
-		}
-
-		if ((tmp = item_data_ptr->description) != NULL)
-		{
-			while(*tmp != 0)
-			{
-				if (iscntrl(*tmp))
-					*tmp = ' ';
-				tmp++;
-			}
-		}
-
-		if ((tmp = item_data_ptr->pubdate) != NULL)
-		{
-			while(*tmp != 0)
-			{
-				if (iscntrl(*tmp))
-					*tmp = ' ';
-				tmp++;
-			}
-		}
-	}
-	
+		clear_cch(item_data_ptr);
+		
 	// Clear html tags
 	if (parser_options.linked_list_data & LLDATACLEARHTML)
 	{
