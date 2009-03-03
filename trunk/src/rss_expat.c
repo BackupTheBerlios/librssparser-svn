@@ -74,7 +74,15 @@ void xml_stop_item_handler(void *user_data, const XML_Char *s, int len)
 
 	// Need to clean up data?
 	if (parser_options.linked_list_data != 0)
-		clean_linked_list_data(item_data_ptr);
+	{
+		if(clean_linked_list_data(item_data_ptr) == -1)
+		{
+#ifdef DEBUG
+			fprintf(stderr, "clear_linked_list_data(): fail\n");
+#endif
+			return;
+		}
+	}
 
 	// End of parsing, save data to linked list
 	if (add_rss_data(item_data_ptr) == -1)

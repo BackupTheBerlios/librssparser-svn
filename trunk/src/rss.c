@@ -45,9 +45,6 @@ int set_rss_data(char *input_data)
 
 	if (RSS_data != NULL)
 	{
-		RSS_data->data_size = 0;
-		RSS_data->data = NULL;
-
 		RSS_data->data = strdup(input_data);
 		RSS_data->data_size = strlen(input_data);
 
@@ -73,6 +70,7 @@ struct RSS_item_t *rss_fetch(char *input_data)
 	struct RSS_item_t *RSS_item_list = NULL;
 	list_head.first = list_head.last = RSS_item_list;	// start list
 
+	// Save user input
 	if (set_rss_data(input_data) == -1)
 	{
 #ifdef DEBUG

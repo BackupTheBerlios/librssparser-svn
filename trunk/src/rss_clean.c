@@ -268,7 +268,7 @@ void save_no_html_string(char *to, char *from)
 }
 
 // Clear control characters
-void clear_cch(struct item_data *item_data_ptr)
+int clear_cch(struct item_data *item_data_ptr)
 {
 	char *tmp = NULL;
 	char *new = NULL;
@@ -278,7 +278,8 @@ void clear_cch(struct item_data *item_data_ptr)
 	if ((tmp = item_data_ptr->title) != NULL)
 	{
 		tmp_ptr = tmp;
-		new_ptr = new = malloc(item_data_ptr->title_size);
+		if((new_ptr = new = malloc(item_data_ptr->title_size)) == NULL)	// save new space
+			return -1;
 
 		while(*tmp != '\0') // Don't delete '\0' !
 		{
@@ -320,7 +321,8 @@ void clear_cch(struct item_data *item_data_ptr)
 	if ((tmp = item_data_ptr->description) != NULL)
 	{
 		tmp_ptr = tmp;
-		new_ptr = new = malloc(item_data_ptr->description_size);
+		if ((new_ptr = new = malloc(item_data_ptr->description_size)) == NULL)
+			return -1;
 
 		while(*tmp != '\0') // Don't delete '\0' !
 		{
@@ -341,7 +343,8 @@ void clear_cch(struct item_data *item_data_ptr)
 	if ((tmp = item_data_ptr->pubdate) != NULL)
 	{
 		tmp_ptr = tmp;
-		new_ptr = new = malloc(item_data_ptr->pubdate_size);
+		if ((new_ptr = new = malloc(item_data_ptr->pubdate_size)) == NULL)
+			return -1;
 
 		while(*tmp != '\0') // Don't delete '\0' !
 		{
@@ -358,16 +361,26 @@ void clear_cch(struct item_data *item_data_ptr)
 		item_data_ptr->pubdate = new_ptr;
 		item_data_ptr->pubdate_size = strlen(new_ptr);
 	}
+
+	return 0;
 }
 
 // Clean data on linked-list as user wants
-void clean_linked_list_data(struct item_data *item_data_ptr)
+int clean_linked_list_data(struct item_data *item_data_ptr)
 {
 	char *tmp = NULL;
 
 	// Clear control characters
 	if (parser_options.linked_list_data & LLDATACLEARCCH)
-		clear_cch(item_data_ptr);
+	{
+		if(clear_cch(item_data_ptr) == -1)
+		{
+#ifdef DEBUG
+			fprintf(stderr, "clear_cch(): fail\n");
+#endif
+			return -1;
+		}
+	}
 		
 	// Clear html tags
 	if (parser_options.linked_list_data & LLDATACLEARHTML)
@@ -480,4 +493,6 @@ void clean_linked_list_data(struct item_data *item_data_ptr)
 				free(ptr);
 		}		
 	}
+
+	return 0;
 }

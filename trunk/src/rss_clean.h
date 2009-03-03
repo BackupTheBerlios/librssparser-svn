@@ -19,7 +19,7 @@
 #include "rss_expat.h"
 
 // This function cleans data before it's insert on linked-list
-void clean_linked_list_data(struct item_data *item_data_ptr);
+int clean_linked_list_data(struct item_data *item_data_ptr);
 
 #endif   /* ----- #ifndef RSS_CLEAN_INC  ----- */
 
