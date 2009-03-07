@@ -382,7 +382,7 @@ int rss_parse_data(RSS_data_t *RSS_data)
 	}
 	
 	XML_SetElementHandler(RSS_parser, xml_start_handler, xml_stop_handler);
-	
+
 	if (data_to_utf8(RSS_data) == -1)
 	{
 #ifdef DEBUG
