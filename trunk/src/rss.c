@@ -97,11 +97,16 @@ struct RSS_item_t *rss_fetch(char *input_data)
 // Set parser options
 void rss_set_opt(int opt_type, int options)
 {
-	// Set options for linked-list
-	if (opt_type == LLOPTTYPE)
-		parser_options.linked_list = options;
+	switch(opt_type)
+	{
+		// Set options for linked-list
+		case LLOPTTYPE:
+			parser_options.linked_list = options;
+			break;
 
-	// Set options for data on linked-list
-	if (opt_type == LLDATAOPTTYPE)
-		parser_options.linked_list_data = options;
+		// Set options for data on linked-list
+		case LLDATAOPTTYPE:
+			parser_options.linked_list_data = options;
+			break;
+	}
 }
