@@ -54,15 +54,19 @@ size_t curl_get_data(void *ptr, size_t size, size_t nmemb, void *stream)
 
 	if (rss_size == 0)
 	{
-		printf("No data size\n");
-
-		exit(1);
+		printf("Error: Can't get data size (Content-Length)\n");
+	
+		return -1;
 	}
 
 	if (rss_buf == NULL)
 	{
 		if ((rss_buf = malloc(rss_size+1)) == NULL)
+		{
+			printf("Error: Out of memory?\n");
+	
 			return -1;
+		}
 
 		memset(rss_buf, 0, rss_size+1);
 	}
@@ -91,6 +95,7 @@ int main(int argc, char **argv)
 	if (argc != 3)
 	{
 		printf("usage: %s [address] [file]\n", argv[0]);
+
 		return -1;
 	}
 
@@ -109,16 +114,22 @@ int main(int argc, char **argv)
 
 	curl_error = curl_easy_setopt(c_url, CURLOPT_URL, url);
 	curl_error = curl_easy_setopt(c_url, CURLOPT_HEADERFUNCTION, curl_header);
+
 	if ((curl_error = curl_easy_setopt(c_url, CURLOPT_WRITEFUNCTION, curl_get_data)) != 0)
 		return -1;
 	
 	if ((curl_error = curl_easy_perform(c_url)) != 0)
+	{
+		printf("Error: No such url (%s)\n", url);
 		return -1;
+	}
 
 	curl_error = curl_easy_getinfo(c_url, CURLINFO_RESPONSE_CODE, &http_code);
 
 	if ((http_code == 404) || (http_code == 301))
 	{
+		printf("Error: No such url (%s)\n", url);
+
 		rss_size = 0;
 		free(rss_buf);
 		rss_buf = NULL;
@@ -137,9 +148,8 @@ int main(int argc, char **argv)
 	free(url);
 
 	rss_set_opt(LLDATAOPTTYPE, LLDATACLEARCCH | LLDATACLEARHTML);
-	lista = rss_fetch(rss_buf);
-
-	if (lista == NULL)
+	
+	if ((lista = rss_fetch(rss_buf)) == NULL)
 	{
 		free_rss_list(lista);
 		return -1;

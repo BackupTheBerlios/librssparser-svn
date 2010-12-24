@@ -30,4 +30,3 @@ struct list_head_t
 int add_rss_data(struct item_data const *item_data_ptr);
 
 #endif   /* ----- #ifndef RSS_LIST_INC  ----- */
-

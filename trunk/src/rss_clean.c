@@ -13,6 +13,7 @@
  * =====================================================================================
  */
 
+#include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 
@@ -365,23 +366,52 @@ int clear_cch(struct item_data *item_data_ptr)
 	return 0;
 }
 
+char *clear_html(char *data, size_t *out_size)
+{
+	char *ret = NULL;
+	char *tmp = NULL;
+	char *ptr = NULL;
+	size_t new_size = 0;
+
+	if ((tmp = data) != NULL)
+	{
+		new_size = count_no_html_size(tmp);
+		ptr = ret = malloc(new_size+1);
+		tmp = data;
+		save_no_html_string(ptr, tmp);
+
+		// Replace HTML markup code
+		if ((tmp = replace(ptr)) != NULL)
+		{
+			free(ret);
+
+			ret = strdup(rm_spaces(tmp));
+			*out_size = strlen(ret);
+
+			free(tmp);
+
+			return ret;
+		}
+		else
+			free(ptr);
+	}
+
+	return NULL;
+}
+
 // Clean data on linked-list as user wants
 int clean_linked_list_data(struct item_data *item_data_ptr)
 {
-	char *tmp = NULL;
-
 	// Clear control characters
 	if (parser_options.linked_list_data & LLDATACLEARCCH)
 	{
 		if(clear_cch(item_data_ptr) == -1)
 		{
-#ifdef DEBUG
 			fprintf(stderr, "clear_cch(): fail\n");
-#endif
 			return -1;
 		}
 	}
-		
+
 	// Clear html tags
 	if (parser_options.linked_list_data & LLDATACLEARHTML)
 	{
@@ -389,109 +419,41 @@ int clean_linked_list_data(struct item_data *item_data_ptr)
 		char *no_html_link = NULL;
 		char *no_html_pubdate = NULL;
 		char *no_html_description = NULL;
-		char *ptr = NULL;
 
 		size_t new_size = 0;
 
-		if ((tmp = item_data_ptr->title) != NULL)
+		if ((no_html_title = clear_html(item_data_ptr->title, &new_size)) != NULL)
 		{
-			new_size = count_no_html_size(tmp);
-			
-			ptr = no_html_title = malloc(new_size+1);
+			free(item_data_ptr->title);
 
-			tmp = item_data_ptr->title;
+			item_data_ptr->title = no_html_title;
+			item_data_ptr->title_size = new_size;
 
-			save_no_html_string(ptr, tmp);
+		}
+		
+		if ((no_html_link = clear_html(item_data_ptr->link, &new_size)) != NULL)
+		{
+			free(item_data_ptr->link);
 
-			// Replace HTML markup code
-			if ((tmp = replace(ptr)) != NULL)
-			{
-				free(ptr);
-				free(item_data_ptr->title);
-
-				item_data_ptr->title = strdup(rm_spaces(tmp));
-				item_data_ptr->title_size = strlen(item_data_ptr->title);
-
-				free(tmp);
-			}
-			else
-				free(ptr);
+			item_data_ptr->link = no_html_link;
+			item_data_ptr->link_size = new_size;
 		}
 
-		if ((tmp = item_data_ptr->link) != NULL)
+		if ((no_html_pubdate = clear_html(item_data_ptr->pubdate, &new_size)) != NULL)
 		{
-			new_size = count_no_html_size(tmp);
+			free(item_data_ptr->pubdate);
 
-			ptr = no_html_link = malloc(new_size+1);
-
-			tmp = item_data_ptr->link;
-
-			save_no_html_string(ptr, tmp);
-
-			// Replace HTML markup code
-			if ((tmp = replace(ptr)) != NULL)
-			{
-				free(ptr);
-				free(item_data_ptr->link);
-
-				item_data_ptr->link = strdup(rm_spaces(tmp));
-				item_data_ptr->link_size = strlen(item_data_ptr->link);
-
-				free(tmp);
-			}
-			else
-				free(ptr);
+			item_data_ptr->pubdate = no_html_pubdate;
+			item_data_ptr->pubdate_size = new_size;
 		}
 
-		if ((tmp = item_data_ptr->pubdate) != NULL)
+		if ((no_html_description = clear_html(item_data_ptr->description, &new_size)) != NULL)
 		{
-			new_size = count_no_html_size(tmp);
-			
-			ptr = no_html_pubdate = malloc(new_size+1);
+			free(item_data_ptr->description);
 
-			tmp = item_data_ptr->pubdate;
-
-			save_no_html_string(ptr, tmp);
-
-			// Replace HTML markup code
-			if ((tmp = replace(ptr)) != NULL)
-			{
-				free(ptr);
-				free(item_data_ptr->pubdate);
-
-				item_data_ptr->pubdate = strdup(rm_spaces(tmp));
-				item_data_ptr->pubdate_size = strlen(item_data_ptr->pubdate);
-
-				free(tmp);
-			}
-			else
-				free(ptr);
+			item_data_ptr->description = no_html_description;
+			item_data_ptr->description_size = new_size;
 		}
-
-		if ((tmp = item_data_ptr->description) != NULL)
-		{
-			new_size = count_no_html_size(tmp);
-
-			ptr = no_html_description = malloc(new_size+1);
-
-			tmp = item_data_ptr->description;
-
-			save_no_html_string(ptr, tmp);
-
-			// Replace HTML markup code
-			if ((tmp = replace(ptr)) != NULL)
-			{
-				free(ptr);
-				free(item_data_ptr->description);
-
-				item_data_ptr->description = strdup(rm_spaces(tmp));
-				item_data_ptr->description_size = strlen(item_data_ptr->description);
-
-				free(tmp);
-			}
-			else
-				free(ptr);
-		}		
 	}
 
 	return 0;

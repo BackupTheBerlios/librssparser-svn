@@ -16,10 +16,10 @@
 #ifndef  RSS_EXPAT_INC
 #define  RSS_EXPAT_INC
 
+#include <expat.h>
+
 #include "rss.h"
 #include "rss_data.h"
-
-#include <expat.h>
 
 // Local struct to hold parsed data
 struct item_data
@@ -43,4 +43,3 @@ void xml_stop_handler(void *user_data, const XML_Char *name);
 
 
 #endif   /* ----- #ifndef RSS_EXPAT_INC  ----- */
-

@@ -21,4 +21,3 @@
 int data_to_utf8(RSS_data_t *RSS_data);
 
 #endif   /* ----- #ifndef RSS_ICONV_INC  ----- */
-

@@ -16,6 +16,8 @@
 #ifndef  RSS_DATA_INC
 #define  RSS_DATA_INC
 
+#include <sys/types.h>
+
 // Main data structure
 typedef struct
 {
@@ -24,4 +26,3 @@ typedef struct
 } RSS_data_t;
 
 #endif   /* ----- #ifndef RSS_DATA_INC  ----- */
-

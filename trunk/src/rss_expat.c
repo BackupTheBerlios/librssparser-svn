@@ -13,18 +13,19 @@
  * =====================================================================================
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <expat.h>
+#include <iconv.h>
+#include <ctype.h>
+
 #include "rss.h"
 #include "rss_expat.h"
 #include "rss_list.h"
 #include "rss_iconv.h"
 #include "rss_options.h"
 #include "rss_clean.h"
-
-#include <stdlib.h>
-#include <string.h>
-#include <expat.h>
-#include <iconv.h>
-#include <ctype.h>
 
 extern struct opt parser_options;
 
@@ -49,7 +50,7 @@ void xml_start_item_handler(void *user_data, const XML_Char *s, int len)
 	item_data_ptr->title = NULL;
 
 	item_data_ptr->link_size = 0;
-	
+	item_data_ptr->link = NULL;
 
 	item_data_ptr->description_size = 0;
 	item_data_ptr->description = NULL;
@@ -77,9 +78,7 @@ void xml_stop_item_handler(void *user_data, const XML_Char *s, int len)
 	{
 		if(clean_linked_list_data(item_data_ptr) == -1)
 		{
-#ifdef DEBUG
 			fprintf(stderr, "clear_linked_list_data(): fail\n");
-#endif
 			return;
 		}
 	}
@@ -87,13 +86,11 @@ void xml_stop_item_handler(void *user_data, const XML_Char *s, int len)
 	// End of parsing, save data to linked list
 	if (add_rss_data(item_data_ptr) == -1)
 	{
-#ifdef DEBUG
 		fprintf(stderr, "add_rss_data(): fail\n");
-#endif
 		return;
 	}
 
-	// Free data
+	// Free local handler data
 	free(item_data_ptr->title);
 	free(item_data_ptr->link);
 	free(item_data_ptr->description);
@@ -375,9 +372,7 @@ int rss_parse_data(RSS_data_t *RSS_data)
 
 	if ((RSS_parser = XML_ParserCreate("UTF-8")) == NULL)
 	{
-#ifdef DEBUG
 		fprintf (stderr, "XML_ParserCreate(): fail\n");
-#endif
 		return -1;
 	}
 	
@@ -385,22 +380,20 @@ int rss_parse_data(RSS_data_t *RSS_data)
 
 	if (data_to_utf8(RSS_data) == -1)
 	{
-#ifdef DEBUG
 		fprintf (stderr, "data_to_utf8(): fail\n");
-#endif
+
 		XML_ParserFree(RSS_parser);
-		return -2;
+		return -1;
 	}
 
 	// Parse raw rss data
 	if (XML_Parse(RSS_parser, RSS_data->data, RSS_data->data_size-1, 1) == 0) 
 	{
-#ifdef DEBUG
 		fprintf (stderr, "XML_Parse(): fail\n");
 		fprintf (stderr, "%s\n", XML_ErrorString(XML_GetErrorCode(RSS_parser)));
-#endif
+
 		XML_ParserFree(RSS_parser);
-		return -3;
+		return -1;
 	}
 
 	XML_ParserFree(RSS_parser);

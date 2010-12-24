@@ -22,4 +22,3 @@
 int clean_linked_list_data(struct item_data *item_data_ptr);
 
 #endif   /* ----- #ifndef RSS_CLEAN_INC  ----- */
-

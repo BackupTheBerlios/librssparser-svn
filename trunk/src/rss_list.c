@@ -13,6 +13,7 @@
  * =====================================================================================
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -27,9 +28,7 @@ int add_rss_data(struct item_data const *item_data_ptr)
 	{
 		if ((list_head.first = malloc(sizeof(struct RSS_item_t))) == NULL)
 		{
-#ifdef DEBUG
 			fprintf (stderr, "malloc() fail\n");
-#endif
 			return -1;
 		}
 
@@ -66,9 +65,7 @@ int add_rss_data(struct item_data const *item_data_ptr)
 
 		if ((list_head.last->next_item = malloc(sizeof(struct RSS_item_t))) == NULL)
 		{
-#ifdef DEBUG
 			fprintf (stderr, "malloc() fail\n");
-#endif
 			return -1;
 		}
 

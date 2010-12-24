@@ -80,9 +80,7 @@ int data_to_utf8(RSS_data_t *RSS_data)
 
 	if ((from = get_data_code(RSS_data)) == NULL)
 	{
-#ifdef DEBUG
 		fprintf(stderr, "get_data_code(): fail\n");
-#endif
 		return -1;
 	}
 
@@ -91,10 +89,8 @@ int data_to_utf8(RSS_data_t *RSS_data)
 	{
 		if ((fd = iconv_open("UTF-8", from)) == (iconv_t)-1)
 		{
-#ifdef DEBUG
 			fprintf(stderr, "iconv_open(): fail\n");
-#endif
-			return -2;
+			return -1;
 		}
 
 		// Output size = input size + 256
@@ -102,10 +98,8 @@ int data_to_utf8(RSS_data_t *RSS_data)
 
 		if ((tmp_out = out = malloc(out_size)) == NULL)
 		{
-#ifdef DEBUG
 			fprintf(stderr, "malloc(): fail\n");
-#endif
-			return -3;
+			return -1;
 		}
 
 		memset(out, 0, out_size);
@@ -142,10 +136,8 @@ int data_to_utf8(RSS_data_t *RSS_data)
 	
 		if ((RSS_data->data = malloc(RSS_data->data_size)) == NULL)
 		{
-#ifdef DEBUG
 			fprintf(stderr, "malloc(): fail\n");
-#endif
-			return -5;
+			return -1;
 		}
 
 		*(RSS_data->data) = '\0';
