@@ -38,7 +38,7 @@ size_t curl_header(void *ptr, size_t size, size_t nmemb, void *stream)
 	for (data_pos = 0; data_pos < data_size; data_pos++)
 		line[data_pos] = ptr_data[data_pos];
 
-	sscanf(line, "Content-Length: %d\n", &rss_size);
+	sscanf(line, "Content-Length: %lu\n", &rss_size);
 	
 	(void)stream;
 
@@ -51,6 +51,13 @@ size_t curl_get_data(void *ptr, size_t size, size_t nmemb, void *stream)
 	size_t data_pos;
 	char line[data_size];
 	char *ptr_data = ptr;
+
+	if (rss_size == 0)
+	{
+		printf("No data size\n");
+
+		exit(1);
+	}
 
 	if (rss_buf == NULL)
 	{
@@ -96,7 +103,8 @@ int main(int argc, char **argv)
 
 	url[0] = '\0';
 	strcat(url, argv[1]);
-	strcat(url, "/");
+	if (url[strlen(url)-1] != '/')
+		strcat(url, "/");
 	strcat(url, argv[2]);
 
 	curl_error = curl_easy_setopt(c_url, CURLOPT_URL, url);
