@@ -48,8 +48,7 @@ int save_rss_data(char *input_data)
 		if ((RSS_data->data = strdup(input_data)) == NULL)
 			return -1;
 
-		if ((RSS_data->data_size = strlen(input_data)) == NULL)
-			return -1;
+		RSS_data->data_size = strlen(input_data);
 
 		return 0;	// malloc sucess
 	}

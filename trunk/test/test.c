@@ -87,14 +87,13 @@ int main(int argc, char **argv)
 {
 	struct RSS_item_t *lista, *tmp;
 
-	char *url = NULL;
 	CURL *c_url = NULL;
 	CURLcode curl_error = 0;
 	long http_code = 0;
 
-	if (argc != 3)
+	if (argc != 2)
 	{
-		printf("usage: %s [address] [file]\n", argv[0]);
+		printf("usage: %s [address]\n", argv[0]);
 
 		return -1;
 	}
@@ -104,15 +103,7 @@ int main(int argc, char **argv)
 	if ((c_url = curl_easy_init()) == NULL)
 		return -1;
 
-	url = malloc(strlen(argv[1])+strlen(argv[2])+2);
-
-	url[0] = '\0';
-	strcat(url, argv[1]);
-	if (url[strlen(url)-1] != '/')
-		strcat(url, "/");
-	strcat(url, argv[2]);
-
-	curl_error = curl_easy_setopt(c_url, CURLOPT_URL, url);
+	curl_error = curl_easy_setopt(c_url, CURLOPT_URL, argv[1]);
 	curl_error = curl_easy_setopt(c_url, CURLOPT_HEADERFUNCTION, curl_header);
 
 	if ((curl_error = curl_easy_setopt(c_url, CURLOPT_WRITEFUNCTION, curl_get_data)) != 0)
@@ -120,7 +111,7 @@ int main(int argc, char **argv)
 	
 	if ((curl_error = curl_easy_perform(c_url)) != 0)
 	{
-		printf("Error: No such url (%s)\n", url);
+		printf("Error: No such url (%s)\n", argv[1]);
 		return -1;
 	}
 
@@ -128,7 +119,7 @@ int main(int argc, char **argv)
 
 	if ((http_code == 404) || (http_code == 301))
 	{
-		printf("Error: No such url (%s)\n", url);
+		printf("Error: No such url (%s)\n", argv[1]);
 
 		rss_size = 0;
 		free(rss_buf);
@@ -137,15 +128,11 @@ int main(int argc, char **argv)
 		curl_easy_cleanup(c_url);
 		curl_global_cleanup();
 
-		free(url);
-
 		return -1;
 	}
 
 	curl_easy_cleanup(c_url);
 	curl_global_cleanup();
-
-	free(url);
 
 	rss_set_opt(LLDATAOPTTYPE, LLDATACLEARCCH | LLDATACLEARHTML);
 	
